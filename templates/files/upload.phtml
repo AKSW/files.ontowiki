@@ -1,19 +1,26 @@
 <?php
-
 /**
- * OntoWiki File Manager upload template
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
  *
- * @author Christoph Rieß
- * @author Norman Heino <norman.heino@gmail.com>
- * @version $Id: upload.phtml 2769 2009-04-06 14:57:58Z norman.heino $
+ * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 
+/**
+ * Upload Template for the OntoWiki Files Extension
+ *
+ * @category OntoWiki
+ * @package  OntoWiki_extensions_files
+ * @author   Christoph Rieß
+ * @author   Norman Heino <norman.heino@gmail.com>
+ * @author   Sebastian Tramp <mail@sebastian.tramp.name>
+ */
 ?>
 <fieldset id="upload" class="form">
     <legend></legend>
     <div>
         <label for="file_uri"><?php echo $this->_('Resource URI') ?></label>
-		<input class="text prefix-value" value="<?php echo $this->defaultUri ?>" type="text" name="file_uri" id="file_uri" size="10" />
+        <input class="text prefix-value" value="<?php echo $this->defaultUri ?>" type="text" name="file_uri" id="file_uri" size="10" />
     </div>
     <div>
         <label for="file-input">
