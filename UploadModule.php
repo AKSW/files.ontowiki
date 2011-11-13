@@ -15,8 +15,6 @@
  */
 class UploadModule extends OntoWiki_Module
 {
-    private $_fileExists = false;
-
     /*
      * An array of positive regexps to check the class URI of the resource
      * (an empty array means, show always)
@@ -33,11 +31,12 @@ class UploadModule extends OntoWiki_Module
         if (isset($config->typeExpression)) {
             $this->_typeExpressions = $config->typeExpression->toArray();
         }
+
     }
 
     public function getTitle()
     {
-        return "File Upload";
+        return "File Attachment";
     }
 
     public function shouldShow()
@@ -49,7 +48,22 @@ class UploadModule extends OntoWiki_Module
     public function getContents()
     {
         $data['defaultUri'] = $this->_owApp->selectedResource;
-        return $this->render('files/moduleUpload', $data);
+
+        if ($this->_checkFile()) {
+            return $this->render('files/moduleFile', $data);
+        } else {
+            return $this->render('files/moduleUpload', $data);
+        }
+    }
+
+    private function _checkFile()
+    {
+        $pathHashed = _OWROOT
+                    . $this->_privateConfig->path
+                    . DIRECTORY_SEPARATOR
+                    . md5((string) $this->_owApp->selectedResource);
+
+        return is_readable($pathHashed) ? true : false;
     }
 
     /*
