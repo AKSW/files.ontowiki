@@ -10,10 +10,10 @@
  * Controller for the OntoWiki Files Extension
  *
  * @category OntoWiki
- * @package  OntoWiki_extensions_components_files
- * @author   Sebastian Tramp <mail@sebastian.tramp.name>
+ * @package  OntoWiki_extensions_files
  * @author   Christoph Rieß <c.riess.dev@googlemail.com>
  * @author   Norman Heino <norman.heino@gmail.com>
+ * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
  */
 class FilesController extends OntoWiki_Controller_Component
 {
