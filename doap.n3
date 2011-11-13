@@ -12,7 +12,7 @@
   doap:name "files" ;
   owconfig:privateNamespace <http://ns.ontowiki.net/Extensions/files/> ;
   owconfig:templates "templates" ;
-  owconfig:enabled "false"^^xsd:boolean ;
+  owconfig:enabled "true"^^xsd:boolean ;
   owconfig:languages "languages/" ;
   owconfig:defaultAction "display" ;
   rdfs:label "File Resource Manager" ;

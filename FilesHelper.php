@@ -1,8 +1,19 @@
 <?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
 
 /**
- * @category   OntoWiki
- * @package    OntoWiki_extensions_components_files
+ * Helper for the OntoWiki Files Extension
+ *
+ * @category OntoWiki
+ * @package  OntoWiki_extensions_files
+ * @author   Sebastian Tramp <mail@sebastian.tramp.name>
+ * @author   Christoph Rieß <c.riess.dev@googlemail.com>
+ * @author   Norman Heino <norman.heino@gmail.com>
  */
 class FilesHelper extends OntoWiki_Component_Helper
 {
