@@ -1,0 +1,233 @@
+@prefix : <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+    <http://ns.aksw.org/DMS/>     a owl:Ontology;
+         :comment "This web ontology is used for basic document management functionality inside a Semantic Web application like OntoWiki.";
+         :label "Document Management Schema";
+         owl:versionInfo """
+0.1 - Initial version (Michael Martin)
+0.2 - multiple renamings, comments and deletions but need further work! (Sebastian Tramp)
+0.3 - superclass now foaf:Document, mimeHint and suffixHint added
+""";
+         skos:note "We hijack IANA URIs for now. Maybe this will change in future releases ... (ST)" .
+
+ <http://ns.aksw.org/DMS/mimeHint>     a owl:AnnotationProperty;
+    :comment """This annotation property has mime type syntax (e.g. "text/plain"). It should be used as a hint for auto-detecting document types.""";
+    :domain <http://xmlns.com/foaf/0.1/Document>;
+    :label "mime type hint" .
+
+<http://ns.aksw.org/DMS/suffixHint>     a owl:AnnotationProperty;
+     :comment """This annotation property should be used as a hint for auto-detecting document types by providing a LOWER CASE file name suffix (e.g. "pdf")""";
+     :domain <http://xmlns.com/foaf/0.1/Document>;
+     :label "suffix expression hint";
+     skos:note "Applications can get the last part of the file name, lower the case and search this attribute." .
+
+<http://www.iana.org/assignments/media-types/application>     a owl:Class;
+     :label "Anwendungsdatei"@de,
+            "Application file";
+     :seeAlso <http://www.iana.org/assignments/media-types/application>;
+     :subClassOf <http://xmlns.com/foaf/0.1/Document> .
+
+<http://www.iana.org/assignments/media-types/application/mpeg4-generic>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "application/mpeg4-generic";
+     :label "MPEG4 generic"@de,
+            "MPEG4 generic";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc3640.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/application> .
+
+<http://www.iana.org/assignments/media-types/application/msword>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "application/msword";
+     <http://ns.aksw.org/DMS/suffixHint> "doc";
+     :label "MS Word"@de,
+            "MS Word";
+     :seeAlso <http://www.iana.org/assignments/media-types/application/msword>;
+     :subClassOf <http://www.iana.org/assignments/media-types/application> .
+
+<http://www.iana.org/assignments/media-types/application/pdf>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "application/pdf";
+     <http://ns.aksw.org/DMS/suffixHint> "pdf";
+     :label "PDF Datei"@de,
+            "PDF file";
+     :seeAlso <http://www.iana.org/assignments/media-types/application/pdf>,
+            <http://www.rfc-editor.org/rfc/rfc3778.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/application> .
+
+<http://www.iana.org/assignments/media-types/application/rdf+xml>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "application/rdf+xml";
+     :label "RDF+XML";
+     :seeAlso <http://www.ietf.org/rfc/rfc3870.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/application> .
+
+<http://www.iana.org/assignments/media-types/application/rtf>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "application/rtf";
+     <http://ns.aksw.org/DMS/suffixHint> "rtf";
+     :label "RTF Datei"@de,
+            "RTF file";
+     :seeAlso <http://www.iana.org/assignments/media-types/application/rtf>;
+     :subClassOf <http://www.iana.org/assignments/media-types/application> .
+
+<http://www.iana.org/assignments/media-types/application/zip>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "application/zip";
+     <http://ns.aksw.org/DMS/suffixHint> "zip";
+     :label "ZIP Datei"@de,
+            "ZIP file";
+     :seeAlso <http://www.iana.org/assignments/media-types/application/zip>;
+     :subClassOf <http://www.iana.org/assignments/media-types/application> .
+
+<http://www.iana.org/assignments/media-types/audio>     a owl:Class;
+     :label "Audio"@de,
+            "Audio";
+     :seeAlso <http://www.iana.org/assignments/media-types/audio>;
+     :subClassOf <http://xmlns.com/foaf/0.1/Document> .
+
+<http://www.iana.org/assignments/media-types/audio/ac3>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "audio/ac3";
+     <http://ns.aksw.org/DMS/suffixHint> "ac3";
+     :label "AC3 Datei"@de,
+            "AC3 audio file";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc4184.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/audio> .
+
+<http://www.iana.org/assignments/media-types/audio/mpeg>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "audio/mpeg";
+     <http://ns.aksw.org/DMS/suffixHint> "mp3";
+     :label "MPEG Datei"@de,
+            "MPEG audio file";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc3003.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/audio> .
+
+<http://www.iana.org/assignments/media-types/audio/ogg>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "audio/ogg";
+     <http://ns.aksw.org/DMS/suffixHint> "ogg";
+     :label "OGG Datei"@de,
+            "OGG audio file";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc5334.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/audio> .
+
+<http://www.iana.org/assignments/media-types/image>     a owl:Class;
+     :label "Bild"@de,
+            "Image";
+     :seeAlso <http://www.iana.org/assignments/media-types/image>;
+     :subClassOf <http://xmlns.com/foaf/0.1/Document> .
+
+<http://www.iana.org/assignments/media-types/image/gif>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "image/gif";
+     <http://ns.aksw.org/DMS/suffixHint> "gif";
+     :label "GIF Bild"@de,
+            "GIF Image";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc2045.txt>,
+            <http://www.rfc-editor.org/rfc/rfc2046.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/image> .
+
+<http://www.iana.org/assignments/media-types/image/jpeg>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "image/jpeg";
+     <http://ns.aksw.org/DMS/suffixHint> "jpeg",
+            "jpg";
+     :label "JPEG Bild"@de,
+            "JPEG Image";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc2045.txt>,
+            <http://www.rfc-editor.org/rfc/rfc2046.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/image> .
+
+<http://www.iana.org/assignments/media-types/image/png>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "image/png";
+     <http://ns.aksw.org/DMS/suffixHint> "png";
+     :label "PNG Bild"@de,
+            "PNG Image";
+     :seeAlso <http://www.iana.org/assignments/media-types/image/png>;
+     :subClassOf <http://www.iana.org/assignments/media-types/image> .
+
+<http://www.iana.org/assignments/media-types/image/tiff>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "image/tiff";
+     <http://ns.aksw.org/DMS/suffixHint> "tif",
+            "tiff";
+     :label "TIFF Bild"@de,
+            "TIFF Image";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc2302.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/image> .
+
+<http://www.iana.org/assignments/media-types/text>     a owl:Class;
+     :label "Text file",
+            "Textdatei"@de;
+     :seeAlso <http://www.iana.org/assignments/media-types/text>;
+     :subClassOf <http://xmlns.com/foaf/0.1/Document> .
+
+<http://www.iana.org/assignments/media-types/text/css>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "text/css";
+     <http://ns.aksw.org/DMS/suffixHint> "css";
+     :label "CSS";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc2318.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/text> .
+
+<http://www.iana.org/assignments/media-types/text/csv>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "text/csv";
+     <http://ns.aksw.org/DMS/suffixHint> "csv";
+     :label "CSV";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc4180.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/text> .
+
+<http://www.iana.org/assignments/media-types/text/html>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "text/html";
+     <http://ns.aksw.org/DMS/suffixHint> "htm",
+            "html";
+     :label "HTML";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc2854.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/text> .
+
+<http://www.iana.org/assignments/media-types/text/plain>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "text/plain";
+     <http://ns.aksw.org/DMS/suffixHint> "txt";
+     :label "Plain";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc2046.txt>,
+            <http://www.rfc-editor.org/rfc/rfc3676.txt>,
+            <http://www.rfc-editor.org/rfc/rfc5147.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/text> .
+
+<http://www.iana.org/assignments/media-types/text/rtf>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "text/rtf";
+     <http://ns.aksw.org/DMS/suffixHint> "rtf";
+     :label "RTF";
+     :seeAlso <http://www.iana.org/assignments/media-types/text/rtf>;
+     :subClassOf <http://www.iana.org/assignments/media-types/text> .
+
+<http://www.iana.org/assignments/media-types/text/xml>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "application/xml",
+            "text/xml";
+     <http://ns.aksw.org/DMS/suffixHint> "xml";
+     :comment "This class is used for all XML types, which are not RDF.";
+     :label "XML";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc3023.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/text>;
+     skos:note "Maybe we should put XML under application?" .
+
+<http://www.iana.org/assignments/media-types/video>     a owl:Class;
+     :label "Video";
+     :seeAlso <http://www.iana.org/assignments/media-types/video>;
+     :subClassOf <http://xmlns.com/foaf/0.1/Document> .
+
+<http://www.iana.org/assignments/media-types/video/mpeg>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "video/mpeg";
+     <http://ns.aksw.org/DMS/suffixHint> "mpeg",
+            "mpg";
+     :label "MPEG Video";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc2045.txt>,
+            <http://www.rfc-editor.org/rfc/rfc2046.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/video> .
+
+<http://www.iana.org/assignments/media-types/video/ogg>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "video/ogg";
+     :label "OGG Video";
+     :seeAlso <http://www.rfc-editor.org/rfc/rfc5334.txt>;
+     :subClassOf <http://www.iana.org/assignments/media-types/video> .
+
+<http://www.iana.org/assignments/media-types/video/quicktime>     a owl:Class;
+     <http://ns.aksw.org/DMS/mimeHint> "video/quicktime";
+     <http://ns.aksw.org/DMS/suffixHint> "mov";
+     :label "Quicktime";
+     :seeAlso <http://www.iana.org/assignments/media-types/video/quicktime>;
+     :subClassOf <http://www.iana.org/assignments/media-types/video> .
+
+<http://xmlns.com/foaf/0.1/Document>     a owl:Class;
+     :label "Document".
+
