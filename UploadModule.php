@@ -1,0 +1,79 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
+/**
+ * Upload Module for the OntoWiki Files Extension
+ *
+ * @category OntoWiki
+ * @package  OntoWiki_extensions_files
+ * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
+ */
+class UploadModule extends OntoWiki_Module
+{
+    private $_fileExists = false;
+
+    /*
+     * An array of positive regexps to check the class URI of the resource
+     * (an empty array means, show always)
+     */
+    private $_typeExpressions = array();
+
+    /**
+     * Constructor
+     */
+    public function init()
+    {
+        $config = $this->_privateConfig;
+
+        if (isset($config->typeExpression)) {
+            $this->_typeExpressions = $config->typeExpression->toArray();
+        }
+    }
+
+    public function getTitle()
+    {
+        return "File Upload";
+    }
+
+    public function shouldShow()
+    {
+        // show only if type matches
+        return $this->_checkClass();
+    }
+
+    public function getContents()
+    {
+        $data['defaultUri'] = $this->_owApp->selectedResource;
+        return $this->render('files/moduleUpload', $data);
+    }
+
+    /*
+     * checks the resource types agains the configured patterns
+     */
+    private function _checkClass()
+    {
+        $resource = $this->_owApp->selectedResource;
+        $rModel   = $resource->getMemoryModel();
+        foreach ($this->_typeExpressions as $typeExpression) {
+            // search using the preg matchtype
+            if (
+                $rModel->hasSPvalue(
+                    (string) $resource,
+                    EF_RDF_TYPE,
+                    $typeExpression,
+                    'preg'
+                )
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+

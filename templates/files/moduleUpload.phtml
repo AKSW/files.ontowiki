@@ -1,0 +1,28 @@
+<?php
+/**
+ * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ *
+ * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
+/**
+ * Upload Template for the OntoWiki Files Extension Module
+ *
+ * @category OntoWiki
+ * @package  OntoWiki_extensions_files
+ * @author   Christoph Rieß
+ * @author   Norman Heino <norman.heino@gmail.com>
+ * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
+ */
+?>
+<fieldset id="upload" class="form">
+    <div>
+        <input class="text prefix-value" value="<?php echo $this->defaultUri ?>" type="hidden" name="file_uri" id="file_uri" size="10" />
+        <label for="file-input">
+            <?php echo sprintf($this->_('File (max. %1$sB)'), preg_replace('/([kMG])/', ' $1', ini_get('upload_max_filesize'))) ?>
+        </label>
+        <input type="file" id="file-input" name="upload" />
+        <br class="clearall" />
+    </div>
+</fieldset>
