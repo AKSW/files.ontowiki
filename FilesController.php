@@ -28,29 +28,29 @@ class FilesController extends OntoWiki_Controller_Component
     }
 
 
+    private function _deleteFile($resource)
+    {
+        $store = $this->_owApp->erfurt->getStore();
+
+        // remove all statements from sysconfig
+        $store->deleteMatchingStatements(
+            (string) $this->_getConfigModelUri(),
+            $fileUri ,
+            null ,
+            null
+        );
+
+        // remove file from file system
+        unlink($this->getFullPath($fileUri));
+    }
+
     public function deleteAction()
     {
         if ($this->_request->isPost()) {
             // delete file resources
             foreach ($this->_request->getPost('selectedFiles') as $fileUri) {
                 $fileUri = rawurldecode($fileUri);
-
-                $store = $this->_owApp->erfurt->getStore();
-
-                // remove all statements from sysconfig
-                $store->deleteMatchingStatements(
-                    (string) $this->_getConfigModelUri(),
-                    $fileUri ,
-                    null ,
-                    null
-                );
-
-                // remove file from file system
-                $pathHashed = _OWROOT
-                            . $this->_privateConfig->path
-                            . DIRECTORY_SEPARATOR
-                            . md5($fileUri);
-                unlink($pathHashed);
+                $this->_deleteFile($fileUri);
             }
 
             $url = new OntoWiki_Url(array('controller' => 'files', 'action' => 'manage'), array());
@@ -84,10 +84,7 @@ class FilesController extends OntoWiki_Controller_Component
 
         $response = $this->getResponse();
         $response->setRawHeader('Content-Type:' . $mimeType);
-        $pathHashed = _OWROOT
-                    . $this->_privateConfig->path
-                    . DIRECTORY_SEPARATOR
-                    . md5($fileUri);
+        $pathHashed = $this->getFullPath($fileUri);
         if (is_readable($pathHashed)) {
             $response->setBody(file_get_contents($pathHashed));
         }
@@ -176,6 +173,9 @@ class FilesController extends OntoWiki_Controller_Component
     {
         // default file URI
         $defaultUri = $this->_config->urlBase . 'files/';
+        if (isset($this->_request->setResource)) {
+            $defaultUri = $this->_request->setResource;
+        }
 
         // store for sparql queries
         $store        = $this->_owApp->erfurt->getStore();
@@ -208,10 +208,7 @@ class FilesController extends OntoWiki_Controller_Component
                 }
 
                 // build path
-                $pathHashed = _OWROOT
-                            . $this->_privateConfig->path
-                            . DIRECTORY_SEPARATOR
-                            . md5($fileUri);
+                $pathHashed = $this->getFullPath($fileUri);
 
                 // move file
                 if (move_uploaded_file($tmpName, $pathHashed)) {
@@ -290,8 +287,14 @@ class FilesController extends OntoWiki_Controller_Component
                         false
                     );
 
-                    $url->action = 'manage';
-                    $this->_redirect((string) $url);
+                    if (isset($this->_request->setResource)) {
+                        $resourceUri = new OntoWiki_Url(array('route' => 'properties'), array('r'));
+                        $resourceUri->setParam('r', $this->_request->setResource, true);
+                        $this->_redirect((string) $resourceUri);
+                    } else {
+                        $url->action = 'manage';
+                        $this->_redirect((string) $url);
+                    }
                 }
             } else {
                 $this->_owApp->appendMessage(
