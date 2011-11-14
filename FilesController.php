@@ -28,20 +28,24 @@ class FilesController extends OntoWiki_Controller_Component
     }
 
 
-    private function _deleteFile($resource)
+    private function _deleteFile($fileResource)
     {
         $store = $this->_owApp->erfurt->getStore();
+
+        // remove file from file system (silently)
+        $pathHashed = $this->getFullPath($fileResource);
+        if (is_readable($pathHashed)) {
+            unlink($pathHashed);
+        }
 
         // remove all statements from sysconfig
         $store->deleteMatchingStatements(
             (string) $this->_getConfigModelUri(),
-            $fileUri ,
+            $fileResource ,
             null ,
             null
         );
 
-        // remove file from file system
-        unlink($this->getFullPath($fileUri));
     }
 
     public function deleteAction()
@@ -173,9 +177,6 @@ class FilesController extends OntoWiki_Controller_Component
     {
         // default file URI
         $defaultUri = $this->_config->urlBase . 'files/';
-        if (isset($this->_request->setResource)) {
-            $defaultUri = $this->_request->setResource;
-        }
 
         // store for sparql queries
         $store        = $this->_owApp->erfurt->getStore();
@@ -203,8 +204,8 @@ class FilesController extends OntoWiki_Controller_Component
                 // check for unchanged uri
                 if ($fileUri == $defaultUri) {
                     $fileUri = $defaultUri
-                             . 'file'
-                             . (count(scandir(_OWROOT . $this->_privateConfig->path)) - 2);
+                        . 'file'
+                        . (count(scandir(_OWROOT . $this->_privateConfig->path)) - 2);
                 }
 
                 // build path
@@ -303,8 +304,6 @@ class FilesController extends OntoWiki_Controller_Component
             }
         }
 
-        // $this->_helper->viewRenderer->setNoRender();
-        // $this->_helper->layout->disableLayout();
         $this->view->placeholder('main.window.title')->set($this->_owApp->translate->_('Upload File'));
         OntoWiki_Navigation::disableNavigation();
 
@@ -322,6 +321,10 @@ class FilesController extends OntoWiki_Controller_Component
         $this->view->formClass     = 'simple-input input-justify-left';
         $this->view->formName      = 'fileupload';
         $this->view->formEncoding  = 'multipart/form-data';
+        if (isset($this->_request->setResource)) {
+            // forward URI to form so we can redirect later
+            $this->view->setResource  = $this->_request->setResource;
+        }
 
         if (!is_writable($this->_privateConfig->path)) {
             $this->_owApp->appendMessage(

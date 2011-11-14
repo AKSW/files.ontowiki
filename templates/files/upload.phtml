@@ -15,12 +15,32 @@
  * @author   Norman Heino <norman.heino@gmail.com>
  * @author   Sebastian Tramp <mail@sebastian.tramp.name>
  */
+
+if (isset($this->setResource)) {
+    $fileUri      = $this->setResource;
+    $readOnlyFlag = 'readonly';
+    // this hidden value is used for redirecting
+    $hiddenInput = '<input type="hidden" name="setResource" value="'.$this->setResource.'" />';
+} else {
+    $fileUri      = $this->defaultUri;
+    $readOnlyFlag = '';
+    $hiddenInput  = '';
+}
 ?>
 <fieldset id="upload" class="form">
     <legend></legend>
     <div>
+        <?php echo $hiddenInput ?>
         <label for="file_uri"><?php echo $this->_('Resource URI') ?></label>
-        <input class="text prefix-value" value="<?php echo $this->defaultUri ?>" type="text" name="file_uri" id="file_uri" size="10" />
+        <input
+            class="text prefix-value"
+            value="<?php echo $fileUri ?>"
+            type="text"
+            name="file_uri"
+            id="file_uri"
+            size="10"
+            <?php echo $readOnlyFlag ?>
+        />
     </div>
     <div>
         <label for="file-input">
