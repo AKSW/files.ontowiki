@@ -13,7 +13,23 @@
  * @package  OntoWiki_extensions_files
  * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
  */
+$url  = new OntoWiki_Url(
+    array(
+        'controller' => 'files',
+        'action' => 'delete'
+    ),
+    array()
+);
 ?>
-<p class="message info">
+<div class="messagebox info has-contextmenu-area">
     <?php echo $this->_('There is an attached file document on this resource') ?>
-</p>
+    <div class="contextmenu">
+        <a
+            href="<?php echo $url . '?setResource=' . urlencode($this->file_uri) ?>"
+            class="item">
+            <span class="icon icon-delete" title="<?php echo $this->_('Delete Attachment') ?>">
+                <span><?php echo $this->_('Delete Attachment') ?></span>
+            </span>
+        </a>
+    </div>
+</div>

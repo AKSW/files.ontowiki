@@ -11,18 +11,26 @@
  *
  * @category OntoWiki
  * @package  OntoWiki_extensions_files
- * @author   Christoph Rieß
- * @author   Norman Heino <norman.heino@gmail.com>
  * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
  */
+
+$url  = new OntoWiki_Url(
+    array(
+        'controller' => 'files',
+        'action' => 'upload'
+    ),
+    array()
+);
 ?>
-<fieldset id="upload" class="form">
-    <div>
-        <input class="text prefix-value" value="<?php echo $this->defaultUri ?>" type="hidden" name="file_uri" id="file_uri" size="10" />
-        <label for="file-input">
-            <?php echo sprintf($this->_('File (max. %1$sB)'), preg_replace('/([kMG])/', ' $1', ini_get('upload_max_filesize'))) ?>
-        </label>
-        <input type="file" id="file-input" name="upload" />
-        <br class="clearall" />
+<div class="messagebox info has-contextmenu-area">
+    <?php echo $this->_('Currently, no file is attached to this resource.') ?>
+    <div class="contextmenu">
+        <a
+            href="<?php echo $url . '?setResource=' . urlencode($this->file_uri) ?>"
+            class="item">
+            <span class="icon icon-add" title="<?php echo $this->_('Upload File') ?>">
+                <span><?php echo $this->_('Upload File') ?></span>
+            </span>
+        </a>
     </div>
-</fieldset>
+</div>

@@ -47,7 +47,7 @@ class UploadModule extends OntoWiki_Module
 
     public function getContents()
     {
-        $data['defaultUri'] = $this->_owApp->selectedResource;
+        $data['file_uri'] = $this->_owApp->selectedResource;
 
         if ($this->_checkFile()) {
             return $this->render('files/moduleFile', $data);
