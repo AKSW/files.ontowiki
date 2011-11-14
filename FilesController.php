@@ -50,8 +50,8 @@ class FilesController extends OntoWiki_Controller_Component
 
     public function deleteAction()
     {
+        // delete file resources via Post array
         if ($this->_request->isPost()) {
-            // delete file resources
             foreach ($this->_request->getPost('selectedFiles') as $fileUri) {
                 $fileUri = rawurldecode($fileUri);
                 $this->_deleteFile($fileUri);
@@ -59,6 +59,19 @@ class FilesController extends OntoWiki_Controller_Component
 
             $url = new OntoWiki_Url(array('controller' => 'files', 'action' => 'manage'), array());
             $this->_redirect((string) $url);
+        } else if (isset($this->_request->setResource)) {
+            // delete a resource via get setResource parameter
+            $fileUri = rawurldecode($this->_request->setResource);
+            $this->_deleteFile($this->_request->setResource);
+            $this->_owApp->appendMessage(
+                new OntoWiki_Message('File attachment deleted', OntoWiki_Message::SUCCESS)
+            );
+            $resourceUri = new OntoWiki_Url(array('route' => 'properties'), array('r'));
+            $resourceUri->setParam('r', $this->_request->setResource, true);
+            $this->_redirect((string) $resourceUri);
+        } else {
+            // action just requested without anything
+            $this->_forward('manage', 'files');
         }
     }
 
@@ -289,6 +302,9 @@ class FilesController extends OntoWiki_Controller_Component
                     );
 
                     if (isset($this->_request->setResource)) {
+                        $this->_owApp->appendMessage(
+                            new OntoWiki_Message('File attachment added', OntoWiki_Message::SUCCESS)
+                        );
                         $resourceUri = new OntoWiki_Url(array('route' => 'properties'), array('r'));
                         $resourceUri->setParam('r', $this->_request->setResource, true);
                         $this->_redirect((string) $resourceUri);
