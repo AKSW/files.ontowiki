@@ -7,7 +7,7 @@
  */
 
 /**
- * Upload Module for the OntoWiki Files Extension
+ * Upload module for the OntoWiki files extension
  *
  * @category OntoWiki
  * @package  OntoWiki_extensions_files
@@ -56,6 +56,10 @@ class UploadModule extends OntoWiki_Module
         }
     }
 
+    /*
+     * checks for an attached file on the current resource
+     * @todo: use static function from the controller
+     */
     private function _checkFile()
     {
         $pathHashed = _OWROOT

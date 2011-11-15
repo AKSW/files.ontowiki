@@ -7,7 +7,7 @@
  */
 
 /**
- * Controller for the OntoWiki Files Extension
+ * Controller for the OntoWiki files extension
  *
  * @category OntoWiki
  * @package  OntoWiki_extensions_files
@@ -41,8 +41,8 @@ class FilesController extends OntoWiki_Controller_Component
         // remove all statements from sysconfig
         $store->deleteMatchingStatements(
             (string) $this->_getConfigModelUri(),
-            $fileResource ,
-            null ,
+            $fileResource,
+            null,
             null
         );
 
@@ -88,10 +88,7 @@ class FilesController extends OntoWiki_Controller_Component
         $query = new Erfurt_Sparql_SimpleQuery();
         $query->setProloguePart('SELECT DISTINCT ?mime_type')
               ->addFrom((string) $this->_getConfigModelUri())
-              ->setWherePart('
-              WHERE {
-                  <' . $fileUri . '> <' . $mimeProperty . '> ?mime_type.
-              }');
+              ->setWherePart('WHERE {<' . $fileUri . '> <' . $mimeProperty . '> ?mime_type. }');
 
         if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
             $mimeType = $result[0]['mime_type'];
@@ -116,15 +113,17 @@ class FilesController extends OntoWiki_Controller_Component
 
         $query = new Erfurt_Sparql_SimpleQuery();
         $query->setProloguePart('SELECT DISTINCT ?mime_type ?uri')
-              ->addFrom((string) $this->_getConfigModelUri())
-              ->setWherePart('
-              WHERE {
-                  ?uri a <' . $fileClass . '>.
-                  ?uri <' . $fileModel . '> <' . (string) $this->_owApp->selectedModel . '>.
-                  ?uri <' . $mimeProperty . '> ?mime_type.
-              }')
-              ->setOrderClause('?uri')
-              ->setLimit(10); // TODO: paging
+            ->addFrom((string) $this->_getConfigModelUri())
+            ->setWherePart(
+                'WHERE
+                {
+                    ?uri a <' . $fileClass . '>.
+                    ?uri <' . $fileModel . '> <' . (string) $this->_owApp->selectedModel . '>.
+                    ?uri <' . $mimeProperty . '> ?mime_type.
+                }'
+            )
+            ->setOrderClause('?uri')
+            ->setLimit(10); // TODO: paging
 
         if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
             $files = array();
@@ -195,10 +194,10 @@ class FilesController extends OntoWiki_Controller_Component
         $store        = $this->_owApp->erfurt->getStore();
 
         // DMS NS var
-        $DMS_NS = $this->_privateConfig->DMS_NS;
+        $dmsNs = $this->_privateConfig->DMS_NS;
 
         // check if DMS needs to be imported
-        if ($store->isModelAvailable($DMS_NS) && $this->_privateConfig->import_DMS) {
+        if ($store->isModelAvailable($dmsNs) && $this->_privateConfig->import_DMS) {
             $this->_checkDMS();
         }
 
@@ -234,14 +233,14 @@ class FilesController extends OntoWiki_Controller_Component
                     $fileClassLocal = 'http://xmlns.com/foaf/0.1/Document';
 
                     // use mediaType-ontologie if available
-                    if ($store->isModelAvailable($DMS_NS)) {
+                    if ($store->isModelAvailable($dmsNs)) {
                         $allTypes = $store->sparqlQuery(
                             Erfurt_Sparql_SimpleQuery::initWithString(
-                                'SELECT * FROM <' . $DMS_NS . '>
+                                'SELECT * FROM <' . $dmsNs . '>
                                 WHERE {
                                     ?type a <' . EF_OWL_CLASS . '> .
-                                    OPTIONAL { ?type <' . $DMS_NS . 'mimeHint> ?mimeHint . }
-                                    OPTIONAL { ?type <' . $DMS_NS . 'suffixHint> ?suffixHint . }
+                                    OPTIONAL { ?type <' . $dmsNs . 'mimeHint> ?mimeHint . }
+                                    OPTIONAL { ?type <' . $dmsNs . 'suffixHint> ?suffixHint . }
                                 } ORDER BY ?type'
                             )
                         );
@@ -259,7 +258,7 @@ class FilesController extends OntoWiki_Controller_Component
                             }
                         }
 
-                        $suffixType = substr($fileName ,strrpos($fileName,'.'));
+                        $suffixType = substr($fileName, strrpos($fileName, '.'));
                         if (array_key_exists($suffixType, $suffixHintArray)) {
                             $fileClassLocal = $suffixHintArray[$suffixType];
                         }
@@ -271,33 +270,33 @@ class FilesController extends OntoWiki_Controller_Component
 
                     // add file resource as instance in local model
                     $store->addStatement(
-                        (string) $this->_owApp->selectedModel ,
-                        $fileUri ,
-                        EF_RDF_TYPE ,
+                        (string) $this->_owApp->selectedModel,
+                        $fileUri,
+                        EF_RDF_TYPE,
                         array('value' => $fileClassLocal, 'type' => 'uri')
                     );
                     // add file resource as instance in system model
                     $store->addStatement(
                         (string) $this->_getConfigModelUri(),
-                        $fileUri ,
-                        EF_RDF_TYPE ,
+                        $fileUri,
+                        EF_RDF_TYPE,
                         array('value' => $fileClass, 'type' => 'uri'),
                         false
                     );
                     // add file resource mime type
                     $store->addStatement(
                         (string) $this->_getConfigModelUri(),
-                        $fileUri ,
-                        $mimeProperty ,
-                        array('value' => $mimeType, 'type' => 'literal') ,
+                        $fileUri,
+                        $mimeProperty,
+                        array('value' => $mimeType, 'type' => 'literal'),
                         false
                     );
                     // add file resource model
                     $store->addStatement(
                         (string) $this->_getConfigModelUri(),
-                        $fileUri ,
-                        $fileModel ,
-                        array('value' => (string) $this->_owApp->selectedModel, 'type' => 'uri') ,
+                        $fileUri,
+                        $fileModel,
+                        array('value' => (string) $this->_owApp->selectedModel, 'type' => 'uri'),
                         false
                     );
 
@@ -325,8 +324,12 @@ class FilesController extends OntoWiki_Controller_Component
 
         $toolbar = $this->_owApp->toolbar;
         $url->action = 'manage';
-        $toolbar->appendButton(OntoWiki_Toolbar::SUBMIT, array('name' => 'Upload File'))
-                ->appendButton(OntoWiki_Toolbar::EDIT, array('name' => 'File Manager', 'class' => '', 'url' => (string) $url));
+        $toolbar->appendButton(
+            OntoWiki_Toolbar::SUBMIT, array('name' => 'Upload File')
+        );
+        $toolbar->appendButton(
+            OntoWiki_Toolbar::EDIT, array('name' => 'File Manager', 'class' => '', 'url' => (string) $url)
+        );
 
         $this->view->defaultUri = $defaultUri;
         $this->view->placeholder('main.window.toolbar')->set($toolbar);
@@ -366,7 +369,8 @@ class FilesController extends OntoWiki_Controller_Component
     /**
      * method to check import of DMS Schema in current model
      */
-    private function _checkDMS() {
+    private function _checkDMS()
+    {
 
         $store        = $this->_owApp->erfurt->getStore();
 
