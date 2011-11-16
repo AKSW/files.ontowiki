@@ -111,6 +111,7 @@ class FilesController extends OntoWiki_Controller_Component
             $mimeType = 'application/octet-stream';
         }
 
+        // TODO: generate a proper file name here
         $response = $this->getResponse();
         $response->setRawHeader('Content-Type:' . $mimeType);
         $pathHashed = $this->getFullPath($fileUri);
