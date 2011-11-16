@@ -379,19 +379,6 @@ class FilesController extends OntoWiki_Controller_Component
     }
 
     /**
-     * return the file path incl. incl. filename for a given resource
-     */
-    protected function getFullPath($fileUri)
-    {
-        $pathHashed = _OWROOT
-                    . $this->_privateConfig->path
-                    . DIRECTORY_SEPARATOR
-                    . md5($fileUri);
-
-        return $pathHashed;
-    }
-
-    /**
      * method to check import of DMS Schema in current model
      */
     private function _checkDMS()
@@ -430,6 +417,46 @@ class FilesController extends OntoWiki_Controller_Component
         }
 
         return $this->_configModel;
+    }
+
+    /**
+     * return the file path incl. incl. filename for a given resource
+     */
+    public static function getFullPath($fileResource)
+    {
+        $extensionManager = OntoWiki::getInstance()->extensionManager;
+        $privateConfig    = $extensionManager->getPrivateConfig('files');
+        $path             = $privateConfig->path;
+
+        return _OWROOT . $path . DIRECTORY_SEPARATOR . md5($fileResource);
+    }
+
+    /**
+     * Returns the queried mime type (or application/octet-stream) for a given 
+     * file resource
+     */
+    public static function getMimeType($fileResource)
+    {
+        $owApp            = OntoWiki::getInstance();
+        $store            = $owApp->erfurt->getStore();
+        $extensionManager = $owApp->extensionManager;
+        $configModel      = $owApp->erfurt->getConfig()->sysont->modelUri;
+        $privateConfig    = $extensionManager->getPrivateConfig('files');
+        $mimeProperty     = $privateConfig->mime->property;
+
+        $query = new Erfurt_Sparql_SimpleQuery();
+        $query->setProloguePart('SELECT DISTINCT ?mime_type')
+            ->addFrom($configModel)
+            ->setWherePart('WHERE {<' . $fileResource . '> <' . $mimeProperty . '> ?mime_type. }');
+
+        if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
+            $mimeType = $result[0]['mime_type'];
+        } else {
+            // we set the default download file type to 
+            // application/octet-stream
+            $mimeType = 'application/octet-stream';
+        }
+        return $mimeType;
     }
 }
 

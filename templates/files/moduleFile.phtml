@@ -13,6 +13,7 @@
  * @package  OntoWiki_extensions_files
  * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
  */
+
 $deleteUrl  = new OntoWiki_Url(
     array(
         'controller' => 'files',
@@ -20,6 +21,8 @@ $deleteUrl  = new OntoWiki_Url(
     ),
     array()
 );
+$deleteUrl = (string) $deleteUrl . '?setResource='.$this->file_uri;
+
 $getUrl  = new OntoWiki_Url(
     array(
         'controller' => 'files',
@@ -27,19 +30,26 @@ $getUrl  = new OntoWiki_Url(
     ),
     array()
 );
+$getUrl = (string) $getUrl . '?setResource='.$this->file_uri;
+
+$mimeType = $this->mimeType;
 ?>
 <div class="messagebox info has-contextmenu-area">
-    <?php echo $this->_('There is an attached file document on this resource') ?>
+    <p><?php echo $this->_('There is an attached file document on this resource') ?></p>
+    <p>
+        The attached file is of type <code><?php echo $mimeType?></code> and you can
+        <a href="<?php echo $getUrl ?>">download it</a>.
+    </p>
     <div class="contextmenu">
         <a
-            href="<?php echo $getUrl . '?setResource='.$this->file_uri ?>"
+            href="<?php echo $getUrl ?>"
             class="item">
             <span class="icon icon-save" title="<?php echo $this->_('Download Attachment') ?>">
                 <span><?php echo $this->_('Download Attachment') ?></span>
             </span>
         </a>
         <a
-            href="<?php echo $deleteUrl . '?setResource='.$this->file_uri ?>"
+            href="<?php echo $deleteUrl ?>"
             class="item">
             <span class="icon icon-delete" title="<?php echo $this->_('Delete Attachment') ?>">
                 <span><?php echo $this->_('Delete Attachment') ?></span>

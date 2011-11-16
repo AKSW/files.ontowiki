@@ -47,27 +47,19 @@ class UploadModule extends OntoWiki_Module
 
     public function getContents()
     {
-        $data['file_uri'] = $this->_owApp->selectedResource;
+        $selectedResource = $this->_owApp->selectedResource;
 
-        if ($this->_checkFile()) {
+        $data = array();
+        $data['file_uri'] = $selectedResource;
+
+        require_once('FilesController.php');
+        $pathHashed = FilesController::getFullPath($selectedResource);
+        if (is_readable($pathHashed)) {
+            $data['mimeType'] = FilesController::getMimeType($selectedResource);
             return $this->render('files/moduleFile', $data);
         } else {
             return $this->render('files/moduleUpload', $data);
         }
-    }
-
-    /*
-     * checks for an attached file on the current resource
-     * @todo: use static function from the controller
-     */
-    private function _checkFile()
-    {
-        $pathHashed = _OWROOT
-                    . $this->_privateConfig->path
-                    . DIRECTORY_SEPARATOR
-                    . md5((string) $this->_owApp->selectedResource);
-
-        return is_readable($pathHashed) ? true : false;
     }
 
     /*
