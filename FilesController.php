@@ -106,7 +106,9 @@ class FilesController extends OntoWiki_Controller_Component
         if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
             $mimeType = $result[0]['mime_type'];
         } else {
-            $mimeType = 'text/plain';
+            // we set the default download file type to 
+            // application/octet-stream
+            $mimeType = 'application/octet-stream';
         }
 
         $response = $this->getResponse();
