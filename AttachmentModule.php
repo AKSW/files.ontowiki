@@ -69,8 +69,14 @@ class AttachmentModule extends OntoWiki_Module
     {
         $resource = $this->_owApp->selectedResource;
         $rModel   = $resource->getMemoryModel();
+
+        // no configured value means, show always
+        if (count($this->_typeExpressions) == 0) {
+            return true;
+        }
+
+        // search with each expression using the preg matchtype
         foreach ($this->_typeExpressions as $typeExpression) {
-            // search using the preg matchtype
             if (
                 $rModel->hasSPvalue(
                     (string) $resource,
@@ -82,6 +88,8 @@ class AttachmentModule extends OntoWiki_Module
                 return true;
             }
         }
+
+        // type does not match to one of the expressions
         return false;
     }
 }
