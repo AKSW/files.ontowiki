@@ -27,7 +27,10 @@ class FilesController extends OntoWiki_Controller_Component
         $this->_forward('get', 'files');
     }
 
-
+    /**
+     * deletes a file resource from the disk as well as from the config model
+     * but NOT from the user-model
+     */
     private function _deleteFile($fileResource)
     {
         $store = $this->_owApp->erfurt->getStore();
@@ -48,6 +51,10 @@ class FilesController extends OntoWiki_Controller_Component
 
     }
 
+    /**
+     * action to delete a file resource either via post (multiple) or via get
+     * (setResource parameter
+     */
     public function deleteAction()
     {
         // delete file resources via Post array
@@ -75,6 +82,9 @@ class FilesController extends OntoWiki_Controller_Component
         }
     }
 
+    /**
+     * get / download a file resource
+     */
     public function getAction()
     {
         $this->_helper->viewRenderer->setNoRender();
@@ -104,6 +114,9 @@ class FilesController extends OntoWiki_Controller_Component
         }
     }
 
+    /**
+     * manage file resources (main GUI)
+     */
     public function manageAction()
     {
         $mimeProperty = $this->_privateConfig->mime->property;
@@ -185,6 +198,9 @@ class FilesController extends OntoWiki_Controller_Component
         $this->view->formName      = 'filemanagement-delete';
     }
 
+    /**
+     * upload a file resource via POST or get upload GUI
+     */
     public function uploadAction()
     {
         // default file URI
@@ -356,6 +372,9 @@ class FilesController extends OntoWiki_Controller_Component
         header('Connection: close');
     }
 
+    /**
+     * return the file path incl. incl. filename for a given resource
+     */
     protected function getFullPath($fileUri)
     {
         $pathHashed = _OWROOT
