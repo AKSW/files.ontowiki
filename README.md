@@ -1,9 +1,9 @@
 # OntoWiki file resource extension
 
-With this extension you can attach a file document on any resource you
-want.
+With this extension you can attach a file document on any resource managed by
+OntoWiki as well as create new file resources from the scratch.
 
-You can upload / download and delete these attachments and in
+You can upload / download and delete attachments on resources and in
 addition to that, a file manager lists all existing files and you can
 (mass-)delete and upload from this manager too.
 

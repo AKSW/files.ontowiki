@@ -7,13 +7,13 @@
  */
 
 /**
- * Upload module for the OntoWiki files extension
+ * Attachment module for the OntoWiki files extension
  *
  * @category OntoWiki
  * @package  OntoWiki_extensions_files
  * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
  */
-class UploadModule extends OntoWiki_Module
+class AttachmentModule extends OntoWiki_Module
 {
     /*
      * An array of positive regexps to check the class URI of the resource
