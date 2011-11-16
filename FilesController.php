@@ -48,7 +48,6 @@ class FilesController extends OntoWiki_Controller_Component
             null,
             null
         );
-
     }
 
     /**
@@ -91,7 +90,11 @@ class FilesController extends OntoWiki_Controller_Component
         $this->_helper->layout->disableLayout();
 
         // TODO: check acl
-        $fileUri      = $this->_config->urlBase . ltrim($this->_request->getPathInfo(), '/');
+        if (isset($this->_request->setResource)) {
+            $fileUri = $this->_request->setResource;
+        } else {
+            $fileUri = $this->_config->urlBase . ltrim($this->_request->getPathInfo(), '/');
+        }
         $mimeProperty = $this->_privateConfig->mime->property;
         $store        = $this->_owApp->erfurt->getStore();
 

@@ -13,10 +13,17 @@
  * @package  OntoWiki_extensions_files
  * @author   {@link http://sebastian.tramp.name Sebastian Tramp}
  */
-$url  = new OntoWiki_Url(
+$deleteUrl  = new OntoWiki_Url(
     array(
         'controller' => 'files',
         'action' => 'delete'
+    ),
+    array()
+);
+$getUrl  = new OntoWiki_Url(
+    array(
+        'controller' => 'files',
+        'action' => 'get'
     ),
     array()
 );
@@ -25,7 +32,14 @@ $url  = new OntoWiki_Url(
     <?php echo $this->_('There is an attached file document on this resource') ?>
     <div class="contextmenu">
         <a
-            href="<?php echo $url . '?setResource=' . urlencode($this->file_uri) ?>"
+            href="<?php echo $getUrl . '?setResource='.$this->file_uri ?>"
+            class="item">
+            <span class="icon icon-save" title="<?php echo $this->_('Download Attachment') ?>">
+                <span><?php echo $this->_('Download Attachment') ?></span>
+            </span>
+        </a>
+        <a
+            href="<?php echo $deleteUrl . '?setResource='.$this->file_uri ?>"
             class="item">
             <span class="icon icon-delete" title="<?php echo $this->_('Delete Attachment') ?>">
                 <span><?php echo $this->_('Delete Attachment') ?></span>
