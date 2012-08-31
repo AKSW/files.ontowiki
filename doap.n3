@@ -7,28 +7,50 @@
 @prefix event: <http://ns.ontowiki.net/SysOnt/Events/> .
 @prefix : <http://ns.ontowiki.net/Extensions/files/> .
 
+# id, label and description
 <> foaf:primaryTopic :this .
 :this a doap:Project ;
-  doap:name "files" ;
-  owconfig:privateNamespace <http://ns.ontowiki.net/Extensions/files/> ;
-  owconfig:templates "templates" ;
   owconfig:enabled "true"^^xsd:boolean ;
+  doap:description "manage file uploads." ;
+  rdfs:label "File Resource Manager" ;
+  doap:name "files" .
+
+# general properties
+:this owconfig:privateNamespace <http://ns.ontowiki.net/Extensions/files/> ;
+  owconfig:templates "templates" ;
   owconfig:languages "languages/" ;
   owconfig:defaultAction "display" ;
-  rdfs:label "File Resource Manager" ;
-  doap:description "manage file uploads." ;
   owconfig:authorLabel "AKSW" ;
-  doap:maintainer <http://aksw.org> ;
-  :path "uploads" ;
+  doap:maintainer <http://aksw.org> .
+
+# config
+:this :path "uploads" ;
   owconfig:config [
       a owconfig:Config;
       owconfig:id "mime";
       :property <http://localhost/OntoWiki/Config/hasMimeType>
-];
- :class <http://localhost/OntoWiki/Config/File> ;
+  ];
+  :class <http://localhost/OntoWiki/Config/File> ;
   :model <http://localhost/OntoWiki/Config/toModel> ;
   :DMS_NS <http://ns.aksw.org/DMS/> ;
   :import_DMS "1" .
+
+# not added yet
+#; show module at resources of these types (specified by preg expressions)
+#typeExpression[] = "/Document$/"
+#typeExpression[] = "/Image$/"
+#typeExpression[] = "/^http:\/\/www\.iana\.org\/assignments\/media-types\/.*/"
+
+# module
+:this owconfig:hasModule :Attachment .
+:Attachment a owconfig:Module ;
+  rdfs:label "Attachment" ;
+  owconfig:priority "10" ;
+  owconfig:context "main.window.properties" ;
+  owconfig:context "extension.files.attachment" .
+
+# release
 :this doap:release :v1-0 .
 :v1-0 a doap:Version ;
   doap:revision "1.0" .
+
