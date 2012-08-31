@@ -2,7 +2,7 @@
 /**
  * This file is part of the {@link http://ontowiki.net OntoWiki} project.
  *
- * @copyright Copyright (c) 2011, {@link http://aksw.org AKSW}
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 
@@ -106,7 +106,7 @@ class FilesController extends OntoWiki_Controller_Component
         if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
             $mimeType = $result[0]['mime_type'];
         } else {
-            // we set the default download file type to 
+            // we set the default download file type to
             // application/octet-stream
             $mimeType = 'application/octet-stream';
         }
@@ -157,7 +157,7 @@ class FilesController extends OntoWiki_Controller_Component
         }
 
         $this->view->placeholder('main.window.title')->set($this->_owApp->translate->_('File Manager'));
-        OntoWiki_Navigation::disableNavigation();
+        OntoWiki::getInstance()->getNavigation()->disableNavigation();
 
         $toolbar = $this->_owApp->toolbar;
 
@@ -222,7 +222,6 @@ class FilesController extends OntoWiki_Controller_Component
         if ($store->isModelAvailable($dmsNs) && $this->_privateConfig->import_DMS) {
             $this->_checkDMS();
         }
-
 
         $url = new OntoWiki_Url(array('controller' => 'files', 'action' => 'upload'), array());
 
@@ -342,7 +341,7 @@ class FilesController extends OntoWiki_Controller_Component
         }
 
         $this->view->placeholder('main.window.title')->set($this->_owApp->translate->_('Upload File'));
-        OntoWiki_Navigation::disableNavigation();
+        OntoWiki::getInstance()->getNavigation()->disableNavigation();
 
         $toolbar = $this->_owApp->toolbar;
         $url->action = 'manage';
@@ -383,7 +382,6 @@ class FilesController extends OntoWiki_Controller_Component
      */
     private function _checkDMS()
     {
-
         $store        = $this->_owApp->erfurt->getStore();
 
         // checking if model is imported
@@ -432,7 +430,7 @@ class FilesController extends OntoWiki_Controller_Component
     }
 
     /**
-     * Returns the queried mime type (or application/octet-stream) for a given 
+     * Returns the queried mime type (or application/octet-stream) for a given
      * file resource
      */
     public static function getMimeType($fileResource)
@@ -452,7 +450,7 @@ class FilesController extends OntoWiki_Controller_Component
         if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
             $mimeType = $result[0]['mime_type'];
         } else {
-            // we set the default download file type to 
+            // we set the default download file type to
             // application/octet-stream
             $mimeType = 'application/octet-stream';
         }
