@@ -21,6 +21,7 @@
   owconfig:languages "languages/" ;
   owconfig:defaultAction "display" ;
   owconfig:authorLabel "AKSW" ;
+  owconfig:pluginEvent event:onFilesExtensionUploadFile ;
   doap:maintainer <http://aksw.org> .
 
 # config

@@ -43,7 +43,7 @@ class FilesController extends OntoWiki_Controller_Component
 
         // remove all statements from sysconfig
         $store->deleteMatchingStatements(
-            (string) $this->_getConfigModelUri(),
+            (string)$this->_getConfigModelUri(),
             $fileResource,
             null,
             null
@@ -64,7 +64,7 @@ class FilesController extends OntoWiki_Controller_Component
             }
 
             $url = new OntoWiki_Url(array('controller' => 'files', 'action' => 'manage'), array());
-            $this->_redirect((string) $url);
+            $this->_redirect((string)$url);
         } else if (isset($this->_request->setResource)) {
             // delete a resource via get setResource parameter
             $fileUri = rawurldecode($this->_request->setResource);
@@ -74,7 +74,7 @@ class FilesController extends OntoWiki_Controller_Component
             );
             $resourceUri = new OntoWiki_Url(array('route' => 'properties'), array('r'));
             $resourceUri->setParam('r', $this->_request->setResource, true);
-            $this->_redirect((string) $resourceUri);
+            $this->_redirect((string)$resourceUri);
         } else {
             // action just requested without anything
             $this->_forward('manage', 'files');
@@ -100,8 +100,8 @@ class FilesController extends OntoWiki_Controller_Component
 
         $query = new Erfurt_Sparql_SimpleQuery();
         $query->setProloguePart('SELECT DISTINCT ?mime_type')
-              ->addFrom((string) $this->_getConfigModelUri())
-              ->setWherePart('WHERE {<' . $fileUri . '> <' . $mimeProperty . '> ?mime_type. }');
+            ->addFrom((string)$this->_getConfigModelUri())
+            ->setWherePart('WHERE {<' . $fileUri . '> <' . $mimeProperty . '> ?mime_type. }');
 
         if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
             $mimeType = $result[0]['mime_type'];
@@ -132,12 +132,12 @@ class FilesController extends OntoWiki_Controller_Component
 
         $query = new Erfurt_Sparql_SimpleQuery();
         $query->setProloguePart('SELECT DISTINCT ?mime_type ?uri')
-            ->addFrom((string) $this->_getConfigModelUri())
+            ->addFrom((string)$this->_getConfigModelUri())
             ->setWherePart(
                 'WHERE
                 {
                     ?uri a <' . $fileClass . '>.
-                    ?uri <' . $fileModel . '> <' . (string) $this->_owApp->selectedModel . '>.
+                    ?uri <' . $fileModel . '> <' . (string)$this->_owApp->selectedModel . '>.
                     ?uri <' . $mimeProperty . '> ?mime_type.
                 }'
             )
@@ -176,7 +176,7 @@ class FilesController extends OntoWiki_Controller_Component
 
             $toolbar->appendButton(
                 OntoWiki_Toolbar::ADD,
-                array('name' => 'Upload File', 'class' => 'upload-file', 'url' => (string) $url)
+                array('name' => 'Upload File', 'class' => 'upload-file', 'url' => (string)$url)
             );
 
             $this->view->placeholder('main.window.toolbar')->set($toolbar);
@@ -198,7 +198,7 @@ class FilesController extends OntoWiki_Controller_Component
         }
 
         $url->action = 'delete';
-        $this->view->formActionUrl = (string) $url;
+        $this->view->formActionUrl = (string)$url;
         $this->view->formMethod    = 'post';
         $this->view->formClass     = 'simple-input input-justify-left';
         $this->view->formName      = 'filemanagement-delete';
@@ -223,120 +223,30 @@ class FilesController extends OntoWiki_Controller_Component
             $this->_checkDMS();
         }
 
-        $url = new OntoWiki_Url(array('controller' => 'files', 'action' => 'upload'), array());
+        $url = new OntoWiki_Url(
+            array('controller' => 'files', 'action' => 'upload'),
+            array()
+        );
 
         // check for POST'ed data
         if ($this->_request->isPost()) {
-            if ($_FILES['upload']['error'] == UPLOAD_ERR_OK) {
-                // upload ok, move file
-                $fileUri  = $this->_request->getPost('file_uri');
-                $fileName = $_FILES['upload']['name'];
-                $tmpName  = $_FILES['upload']['tmp_name'];
-                $mimeType = $_FILES['upload']['type'];
-
-                // check for unchanged uri
-                if ($fileUri == $defaultUri) {
-                    $fileUri = $defaultUri
-                        . 'file'
-                        . (count(scandir(_OWROOT . $this->_privateConfig->path)) - 2);
+            $event           = new Erfurt_Event('onFilesExtensionUploadFile');
+            $event->request  = $this->_request;
+            $event->defaultUri = $defaultUri;
+            // process upload in plugin
+            $eventResult = $event->trigger();
+            if ($eventResult === true) {
+                if (isset($this->_request->setResource)) {
+                    $this->_owApp->appendMessage(
+                        new OntoWiki_Message('File attachment added', OntoWiki_Message::SUCCESS)
+                    );
+                    $resourceUri = new OntoWiki_Url(array('route' => 'properties'), array('r'));
+                    $resourceUri->setParam('r', $this->_request->setResource, true);
+                    $this->_redirect((string)$resourceUri);
+                } else {
+                    $url->action = 'manage';
+                    $this->_redirect((string)$url);
                 }
-
-                // build path
-                $pathHashed = $this->getFullPath($fileUri);
-
-                // move file
-                if (move_uploaded_file($tmpName, $pathHashed)) {
-                    $mimeProperty = $this->_privateConfig->mime->property;
-                    $fileClass    = $this->_privateConfig->class;
-                    $fileModel    = $this->_privateConfig->model;
-
-                    // use super class as default
-                    $fileClassLocal = 'http://xmlns.com/foaf/0.1/Document';
-
-                    // use mediaType-ontologie if available
-                    if ($store->isModelAvailable($dmsNs)) {
-                        $allTypes = $store->sparqlQuery(
-                            Erfurt_Sparql_SimpleQuery::initWithString(
-                                'SELECT * FROM <' . $dmsNs . '>
-                                WHERE {
-                                    ?type a <' . EF_OWL_CLASS . '> .
-                                    OPTIONAL { ?type <' . $dmsNs . 'mimeHint> ?mimeHint . }
-                                    OPTIONAL { ?type <' . $dmsNs . 'suffixHint> ?suffixHint . }
-                                } ORDER BY ?type'
-                            )
-                        );
-
-                        $mimeHintArray = array();
-                        $suffixHintArray = array();
-
-                        // check for better suited class
-                        foreach ($allTypes as $singleType) {
-                            if (!empty($singleType['mimeHint'])) {
-                                $mimeHintArray[$singleType['mimeHint']]     = $singleType['type'];
-                            }
-                            if (!empty($singleType['suffixHint'])) {
-                                $suffixHintArray[$singleType['suffixHint']]   = $singleType['type'];
-                            }
-                        }
-
-                        $suffixType = substr($fileName, strrpos($fileName, '.'));
-                        if (array_key_exists($suffixType, $suffixHintArray)) {
-                            $fileClassLocal = $suffixHintArray[$suffixType];
-                        }
-
-                        if (array_key_exists($mimeType, $mimeHintArray)) {
-                            $fileClassLocal = $mimeHintArray[$mimeType];
-                        }
-                    }
-
-                    // add file resource as instance in local model
-                    $store->addStatement(
-                        (string) $this->_owApp->selectedModel,
-                        $fileUri,
-                        EF_RDF_TYPE,
-                        array('value' => $fileClassLocal, 'type' => 'uri')
-                    );
-                    // add file resource as instance in system model
-                    $store->addStatement(
-                        (string) $this->_getConfigModelUri(),
-                        $fileUri,
-                        EF_RDF_TYPE,
-                        array('value' => $fileClass, 'type' => 'uri'),
-                        false
-                    );
-                    // add file resource mime type
-                    $store->addStatement(
-                        (string) $this->_getConfigModelUri(),
-                        $fileUri,
-                        $mimeProperty,
-                        array('value' => $mimeType, 'type' => 'literal'),
-                        false
-                    );
-                    // add file resource model
-                    $store->addStatement(
-                        (string) $this->_getConfigModelUri(),
-                        $fileUri,
-                        $fileModel,
-                        array('value' => (string) $this->_owApp->selectedModel, 'type' => 'uri'),
-                        false
-                    );
-
-                    if (isset($this->_request->setResource)) {
-                        $this->_owApp->appendMessage(
-                            new OntoWiki_Message('File attachment added', OntoWiki_Message::SUCCESS)
-                        );
-                        $resourceUri = new OntoWiki_Url(array('route' => 'properties'), array('r'));
-                        $resourceUri->setParam('r', $this->_request->setResource, true);
-                        $this->_redirect((string) $resourceUri);
-                    } else {
-                        $url->action = 'manage';
-                        $this->_redirect((string) $url);
-                    }
-                }
-            } else {
-                $this->_owApp->appendMessage(
-                    new OntoWiki_Message('Error during file upload.', OntoWiki_Message::ERROR)
-                );
             }
         }
 
@@ -349,14 +259,14 @@ class FilesController extends OntoWiki_Controller_Component
             OntoWiki_Toolbar::SUBMIT, array('name' => 'Upload File')
         );
         $toolbar->appendButton(
-            OntoWiki_Toolbar::EDIT, array('name' => 'File Manager', 'class' => '', 'url' => (string) $url)
+            OntoWiki_Toolbar::EDIT, array('name' => 'File Manager', 'class' => '', 'url' => (string)$url)
         );
 
         $this->view->defaultUri = $defaultUri;
         $this->view->placeholder('main.window.toolbar')->set($toolbar);
 
         $url->action = 'upload';
-        $this->view->formActionUrl = (string) $url;
+        $this->view->formActionUrl = (string)$url;
         $this->view->formMethod    = 'post';
         $this->view->formClass     = 'simple-input input-justify-left';
         $this->view->formName      = 'fileupload';
@@ -389,7 +299,7 @@ class FilesController extends OntoWiki_Controller_Component
             Erfurt_Sparql_SimpleQuery::initWithString(
                 'SELECT *
                 WHERE {
-                    <' . (string) $this->_owApp->selectedModel . '> <' . EF_OWL_IMPORTS . '> ?import .
+                    <' . (string)$this->_owApp->selectedModel . '> <' . EF_OWL_IMPORTS . '> ?import .
                 }'
             )
         );
@@ -397,15 +307,12 @@ class FilesController extends OntoWiki_Controller_Component
         // import if missing
         if (!in_array(array('import' => $this->_privateConfig->DMS_NS), $allImports)) {
             $this->_owApp->selectedModel->addStatement(
-                (string) $this->_owApp->selectedModel,
+                (string)$this->_owApp->selectedModel,
                 EF_OWL_IMPORTS,
                 array('value' => $this->_privateConfig->DMS_NS, 'type' => 'uri'),
                 false
             );
-        } else {
-            // do nothing
         }
-
     }
 
     protected function _getConfigModelUri()
@@ -418,7 +325,7 @@ class FilesController extends OntoWiki_Controller_Component
     }
 
     /**
-     * return the file path incl. incl. filename for a given resource
+     * return the file path incl. filename for a given resource
      */
     public static function getFullPath($fileResource)
     {
